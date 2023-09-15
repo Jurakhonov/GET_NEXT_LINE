@@ -6,7 +6,7 @@
 /*   By: jjurakho <jjurakho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/02 07:01:18 by jjurakho          #+#    #+#             */
-/*   Updated: 2023/09/15 08:38:35 by jjurakho         ###   ########.fr       */
+/*   Updated: 2023/09/15 10:59:09 by jjurakho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,28 +30,23 @@ char	*ft_strjoin(char *s1, char *s2)
 	int		j;
 	char	*buff;
 
-	if (!s1)
-	{
-		s1 = (char *)malloc(sizeof(char) * 1);
-		printf("created: %p\n", s1);
-		s1[0] = '\0';
-	}
-	if (s2 == NULL)
-		return (NULL);	
-	buff = malloc(ft_strlen((char *)s1) + ft_strlen((char *)s2) + 2);
-	printf("created: %p\n", buff);
-	if (!buff)
+	if (!s1 && !s2)
 		return (NULL);
-	j = 0;
+	i = ft_strlen(s1);
+	j = ft_strlen(s2);
+	buff = malloc(sizeof(char) * (i + j + 1));
+	if (!buff)
+		return (free(buff), NULL);
 	i = 0;
-	while (s1[j])
-		buff[i++] = s1[j++];
 	j = 0;
+	while (s1[i])
+	{
+		buff[i] = s1[i];
+		i++;
+	}
 	while (s2[j])
 		buff[i++] = s2[j++];
 	buff[i] = '\0';
-	printf("remove: %p\n", s1);
-	free(s1);
 	return (buff);
 }
 
@@ -71,35 +66,23 @@ int	index_of(const char *s, char c)
 	return (-1);
 }
 
-void	*ft_memcpy(void *dest, const void *src, int n)
+char	*copy_line(char *line)
 {
-	unsigned char	*new_dest;
-	unsigned char	*new_src;
-	int				i;
+	char	*tmp;
+	int		i;
 
-	if (!dest && !src)
-		return (0);
-	new_dest = dest;
-	new_src = (unsigned char *)src;
-	i = 0;
-	while (i++ < n)
-		*new_dest++ = *new_src++;
-	return (dest);
-}
-
-char	*ft_strdup(char *str)
-{
-	int		n;
-	char	*res;
-
-	if (!str)
+	if (!line)
 		return (NULL);
-	n = (int)(ft_strlen(str) + 1);
-	res = NULL;
-	res = (char *)malloc(n);
-	printf("created dup: %p\n", res);
-	if (res == NULL)
-		return (0);
-	ft_memcpy(res, str, n);
-	return (res);
+	i = ft_strlen(line);
+	tmp = malloc(sizeof(char) * (i + 1));
+	if (!tmp)
+		return (free(line), NULL);
+	i = 0;
+	while (line[i])
+	{
+		tmp[i] = line[i];
+		i++;
+	}
+	tmp[i] = '\0';
+	return (tmp);
 }

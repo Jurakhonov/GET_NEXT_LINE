@@ -6,7 +6,7 @@
 /*   By: jjurakho <jjurakho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 17:17:28 by jjurakho          #+#    #+#             */
-/*   Updated: 2023/09/15 08:37:46 by jjurakho         ###   ########.fr       */
+/*   Updated: 2023/09/15 10:57:43 by jjurakho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,19 +23,18 @@ char	*read_buf(char *line, char *buffer, int fd)
 		if (byt_r == -1)
 		{
 			line = NULL;
-			printf("remove: %p\n", buffer);
-			free(buffer);
 			return (NULL);
 		}
 		if (!buffer[0] || byt_r == 0)
-			break ;
+		{
+			line = NULL;
+			return (NULL);
+		}
 		buffer[byt_r] = '\0';
 		line = ft_strjoin(line, buffer);
 		if (index_of(line, '\n') != -1 && line[0] != '\n')
 			break ;
 	}
-	printf("remove: %p\n", buffer);
-	free(buffer);
 	return (line);
 }
 
@@ -53,7 +52,6 @@ char	*make_next_line(char *tmp)
 	else
 		i += 1;
 	return_line = malloc(sizeof(char) * i + 1);
-	printf("created nxl: %p\n", return_line);
 	if (!return_line)
 		return (NULL);
 	j = 0;
@@ -63,7 +61,6 @@ char	*make_next_line(char *tmp)
 		j++;
 	}
 	return_line[j] = '\0';
-	printf("remove: %p\n", tmp);
 	free(tmp);
 	return (return_line);
 }
@@ -83,7 +80,6 @@ char	*make_remainder(char *line)
 	if (j <= 0) 
 		return (NULL);
 	tmp = malloc(sizeof(char) * j + 1);
-	printf("created rem: %p\n", tmp);
 	if (!tmp)
 		return (NULL);
 	j = 0;
@@ -93,8 +89,28 @@ char	*make_remainder(char *line)
 		j++;
 	}
 	tmp[j] = '\0';
-	printf("remove: %p\n", line);
 	free(line);
+	return (tmp);
+}
+
+char	*line_dup(char *line)
+{
+	char	*tmp;
+	int		i;
+
+	if (!line)
+		return (NULL);
+	i = ft_strlen(line);
+	tmp = malloc(sizeof(char) * (i + 1));
+	if (!tmp)
+		return (free(line), NULL);
+	i = 0;
+	while (line[i])
+	{
+		tmp[i] = line[i];
+		i++;
+	}
+	tmp[i] = '\0';
 	return (tmp);
 }
 
@@ -111,12 +127,12 @@ char	*get_next_line(int fd)
 	if (fd == -1)
 		return (NULL);
 	buffer = malloc(((size_t)BUFFER_SIZE + 1) * sizeof(char));
-	printf("created: %p\n", buffer);
 	buffer[0] = '\0';
 	if (!buffer)
-		return (NULL);
+		return (free(buffer), NULL);
 	line = read_buf(line, buffer, fd);
-	tmp = ft_strdup(line);
+	free(buffer);
+	tmp = copy_line(line);
 	tmp = make_next_line(tmp);
 	line = make_remainder(line);
 	return (tmp);
@@ -125,22 +141,11 @@ char	*get_next_line(int fd)
 int main()
 {
 	int fd = open("text.txt", O_RDONLY);
-	// get_next_line(fd);
-	// get_next_line(fd);
-	// get_next_line(fd);
-	// get_next_line(fd);
-	// get_next_line(fd);
-	// get_next_line(fd);
-	// get_next_line(fd);
-	// get_next_line(fd);
-	printf("%s\n", get_next_line(fd));
-	printf("%s\n", get_next_line(fd));
-	printf("%s\n", get_next_line(fd));
-	printf("%s\n", get_next_line(fd));
-	printf("%s\n", get_next_line(fd));
-	printf("%s\n", get_next_line(fd));
-	// printf("1. <%s>", get_next_line(fd));
-	// printf("2. <%s>", get_next_line(fd));
+
+	printf("%s", get_next_line(fd));
+	printf("%s", get_next_line(fd));
+	printf("%s", get_next_line(fd));
+	printf("%s", get_next_line(fd));
 	close(fd);
 }
 
