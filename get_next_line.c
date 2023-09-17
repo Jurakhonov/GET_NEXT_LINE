@@ -6,7 +6,7 @@
 /*   By: jjurakho <jjurakho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 17:17:28 by jjurakho          #+#    #+#             */
-/*   Updated: 2023/09/17 06:56:37 by jjurakho         ###   ########.fr       */
+/*   Updated: 2023/09/17 07:14:01 by jjurakho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ char	*read_buf(char *line, char *buffer, int fd)
 
 	rd = 1;
 	// printf("1HI\n");
-	while (rd > 0)
+	while (rd > 0 && fd >= 0)
 	{
 		// printf("2HI\n");
 		rd = read(fd, buffer, BUFFER_SIZE);
@@ -130,6 +130,8 @@ char	*get_next_line(int fd)
 	tmp = NULL;
 	buffer = NULL;
 	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE >= INT_MAX)
+		return (NULL);
+	if (fd == -1)
 		return (NULL);
 	buffer = malloc(((size_t)BUFFER_SIZE + 1) * sizeof(char));
 	buffer[0] = '\0';
