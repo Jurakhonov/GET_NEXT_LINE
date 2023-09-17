@@ -6,7 +6,7 @@
 /*   By: jjurakho <jjurakho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 17:17:28 by jjurakho          #+#    #+#             */
-/*   Updated: 2023/09/15 10:57:43 by jjurakho         ###   ########.fr       */
+/*   Updated: 2023/09/17 06:32:17 by jjurakho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,27 +14,30 @@
 
 char	*read_buf(char *line, char *buffer, int fd)
 {
-	int		byt_r;
+	int		rd;
 
-	byt_r = 1;
-	while (byt_r > 0)
+	rd = 1;
+	// printf("1HI\n");
+	while (rd > 0)
 	{
-		byt_r = read(fd, buffer, BUFFER_SIZE);
-		if (byt_r == -1)
+		// printf("2HI\n");
+		rd = read(fd, buffer, BUFFER_SIZE);
+		if (rd == -1)
 		{
+			free(line);
 			line = NULL;
+			free(buffer);
+			// printf("3HI\n");
 			return (NULL);
 		}
-		if (!buffer[0] || byt_r == 0)
-		{
-			line = NULL;
-			return (NULL);
-		}
-		buffer[byt_r] = '\0';
+		buffer[rd] = '\0';
+		if (!buffer[0])
+			break ;
 		line = ft_strjoin(line, buffer);
-		if (index_of(line, '\n') != -1 && line[0] != '\n')
+		if (rd == 0 && index_of(line, '\n') == -1)
 			break ;
 	}
+	// printf("line: %s\n", line);
 	return (line);
 }
 
@@ -49,8 +52,8 @@ char	*make_next_line(char *tmp)
 	i = index_of(tmp, '\n');
 	if (i == -1)
 		i = ft_strlen(tmp);
-	else
-		i += 1;
+	// else
+	// 	i += 1;
 	return_line = malloc(sizeof(char) * i + 1);
 	if (!return_line)
 		return (NULL);
@@ -62,6 +65,7 @@ char	*make_next_line(char *tmp)
 	}
 	return_line[j] = '\0';
 	free(tmp);
+	// printf("return_line: %s\n", return_line);
 	return (return_line);
 }
 
@@ -90,6 +94,7 @@ char	*make_remainder(char *line)
 	}
 	tmp[j] = '\0';
 	free(line);
+	// printf("tmp: %s\n", tmp);
 	return (tmp);
 }
 
@@ -111,6 +116,7 @@ char	*line_dup(char *line)
 		i++;
 	}
 	tmp[i] = '\0';
+	// printf("tmp: %s\n", tmp);
 	return (tmp);
 }
 
@@ -120,6 +126,7 @@ char	*get_next_line(int fd)
 	char		*tmp;
 	char		*buffer;
 
+	// printf("line: %s\n", line);
 	tmp = NULL;
 	buffer = NULL;
 	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE >= __INT_MAX__)
@@ -142,13 +149,18 @@ int main()
 {
 	int fd = open("text.txt", O_RDONLY);
 
+	// get_next_line(fd);
+	// get_next_line(fd);
+	// get_next_line(fd);
+	// get_next_line(fd);
+	// get_next_line(fd);
 	printf("%s", get_next_line(fd));
-	printf("%s", get_next_line(fd));
-	printf("%s", get_next_line(fd));
-	printf("%s", get_next_line(fd));
+	// printf("%s", get_next_line(fd));
+	// printf("%s", get_next_line(fd));
+	// printf("%s", get_next_line(fd));
 	close(fd);
 }
 
 // printf("good!\n");
-// gcc -Wall -Wextra -Werror get_next_line.c get_next_line_utils.c get_next_line.h -D BUFFER_SIZE=42 && valgrind -q --leak-check=full -s ./a.out | cat -e 
+// gcc -Wall -Wextra -Werror get_next_line.c get_next_line_utils.c get_next_line.h -D BUFFER_SIZE=42  && valgrind -q --leak-check=full -s ./a.out | cat -e 
 // cc -Wall -Werror -Wextra get_next_line.c get_next_line_utils.c get_next_line.h -fsanitize=address -g3

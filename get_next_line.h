@@ -6,7 +6,7 @@
 /*   By: jjurakho <jjurakho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/19 16:51:35 by jjurakho          #+#    #+#             */
-/*   Updated: 2023/09/15 10:50:26 by jjurakho         ###   ########.fr       */
+/*   Updated: 2023/09/17 06:34:46 by jjurakho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,5 +28,7 @@ int		index_of(const char *s, char c);
 char	*copy_line(char *line);
 char	*ft_strjoin(char *saved, char *buffer);
 size_t	ft_strlen(const char *s);
+char	*ft_strdup(const char *src);
+char	*ft_strcpy(char *dest, const char *src);
 
 #endif
