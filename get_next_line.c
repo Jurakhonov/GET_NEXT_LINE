@@ -6,7 +6,7 @@
 /*   By: jjurakho <jjurakho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 17:17:28 by jjurakho          #+#    #+#             */
-/*   Updated: 2023/09/17 06:32:17 by jjurakho         ###   ########.fr       */
+/*   Updated: 2023/09/17 06:56:37 by jjurakho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,9 +129,7 @@ char	*get_next_line(int fd)
 	// printf("line: %s\n", line);
 	tmp = NULL;
 	buffer = NULL;
-	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE >= __INT_MAX__)
-		return (NULL);
-	if (fd == -1)
+	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE >= INT_MAX)
 		return (NULL);
 	buffer = malloc(((size_t)BUFFER_SIZE + 1) * sizeof(char));
 	buffer[0] = '\0';
@@ -145,21 +143,23 @@ char	*get_next_line(int fd)
 	return (tmp);
 }
 
-int main()
-{
-	int fd = open("text.txt", O_RDONLY);
+// int	main(void)
+// {
+// 	int		fd;
+// 	char	*line;
+// 	int		i;
 
-	// get_next_line(fd);
-	// get_next_line(fd);
-	// get_next_line(fd);
-	// get_next_line(fd);
-	// get_next_line(fd);
-	printf("%s", get_next_line(fd));
-	// printf("%s", get_next_line(fd));
-	// printf("%s", get_next_line(fd));
-	// printf("%s", get_next_line(fd));
-	close(fd);
-}
+// 	fd = open("text.txt", O_RDONLY);
+// 	i = 1;
+// 	while ((line = get_next_line(fd)) != NULL)
+// 	{
+// 		printf("line %d: %s\n", i, line);
+// 		free(line);
+// 		i++;
+// 	}
+// 	close(fd);
+// 	return (0);
+// }
 
 // printf("good!\n");
 // gcc -Wall -Wextra -Werror get_next_line.c get_next_line_utils.c get_next_line.h -D BUFFER_SIZE=42  && valgrind -q --leak-check=full -s ./a.out | cat -e 

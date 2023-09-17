@@ -6,7 +6,7 @@
 /*   By: jjurakho <jjurakho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/02 07:01:18 by jjurakho          #+#    #+#             */
-/*   Updated: 2023/09/17 06:35:01 by jjurakho         ###   ########.fr       */
+/*   Updated: 2023/09/17 06:52:03 by jjurakho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,15 +30,15 @@ char	*ft_strjoin(char *s1, char *s2)
 	int		j;
 	char	*buff;
 
+	i = 0;
 	if (!s1 && !s2)
 		return (NULL);
 	if (s2)
 		i = ft_strlen(s1);
-	i = 0;
 	j = ft_strlen(s2);
 	buff = malloc(sizeof(char) * (i + j + 1));
 	if (!buff)
-		return (free(buff), NULL);
+		return (NULL);
 	i = 0;
 	j = 0;
 	while (s1 && s1[i])
