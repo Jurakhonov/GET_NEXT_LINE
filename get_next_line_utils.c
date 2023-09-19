@@ -6,7 +6,7 @@
 /*   By: jjurakho <jjurakho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/02 07:01:18 by jjurakho          #+#    #+#             */
-/*   Updated: 2023/09/17 06:52:03 by jjurakho         ###   ########.fr       */
+/*   Updated: 2023/09/19 18:58:20 by jjurakho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@ size_t	ft_strlen(const char *s)
 {
 	size_t	i;
 
-	i = 0;
 	if (!s)
 		return (0);
+	i = 0;
 	while (s[i] != '\0')
 		i++;
 	return (i);
@@ -33,8 +33,8 @@ char	*ft_strjoin(char *s1, char *s2)
 	i = 0;
 	if (!s1 && !s2)
 		return (NULL);
-	if (s2)
-		i = ft_strlen(s1);
+	// if (s2)
+	i = ft_strlen(s1);
 	j = ft_strlen(s2);
 	buff = malloc(sizeof(char) * (i + j + 1));
 	if (!buff)
@@ -68,6 +68,22 @@ int	index_of(const char *s, char c)
 	return (-1);
 }
 
+char	*ft_strchr(const char *s, int c)
+{
+	char	a;
+
+	a = (char)c;
+	while (*s)
+	{
+		if (*s == a)
+			return ((char *)s);
+		s++;
+	}
+	if (*s == a)
+		return ((char *)s);
+	return (NULL);
+}
+
 char	*copy_line(char *line)
 {
 	char	*tmp;
@@ -87,4 +103,18 @@ char	*copy_line(char *line)
 	}
 	tmp[i] = '\0';
 	return (tmp);
+}
+
+char    *ft_strcpy(char *s1, char *s2)
+{
+	int i;
+
+	i = 0;
+	while (s2[i])
+	{
+		s1[i] = s2[i];
+		i++;
+	}
+	s1[i] = '\0';
+	return (s1);
 }

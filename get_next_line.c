@@ -6,118 +6,103 @@
 /*   By: jjurakho <jjurakho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 17:17:28 by jjurakho          #+#    #+#             */
-/*   Updated: 2023/09/17 07:14:01 by jjurakho         ###   ########.fr       */
+/*   Updated: 2023/09/19 20:04:36 by jjurakho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*read_buf(char *line, char *buffer, int fd)
+char	*read_buf(char *line, int fd) // in case use original version
 {
 	int		rd;
-
+	char	*buffer;
+	char	*temp;
+	
 	rd = 1;
-	// printf("1HI\n");
-	while (rd > 0 && fd >= 0)
+	buffer = malloc(((size_t)BUFFER_SIZE + 1) * sizeof(char));
+	if (!buffer)
+		return (NULL);
+	while (rd > 0)
 	{
-		// printf("2HI\n");
 		rd = read(fd, buffer, BUFFER_SIZE);
 		if (rd == -1)
 		{
 			free(line);
 			line = NULL;
 			free(buffer);
-			// printf("3HI\n");
 			return (NULL);
 		}
-		buffer[rd] = '\0';
-		if (!buffer[0])
+		if (rd == 0)
 			break ;
-		line = ft_strjoin(line, buffer);
-		if (rd == 0 && index_of(line, '\n') == -1)
+		buffer[rd] = '\0';
+		temp = ft_strjoin(line, buffer);
+		if (line)
+			free(line);
+		line = temp;
+		temp = NULL;
+		if (ft_strchr(line, '\n'))
 			break ;
 	}
-	// printf("line: %s\n", line);
+	free(buffer);
 	return (line);
 }
 
-char	*make_next_line(char *tmp)
+char	*make_next_line(char *str)
 {
-	int		j;
+	char	*p;
 	int		i;
-	char	*return_line;
+	char	*tmp;
+	char	*tmp_start;
+	char	*str_start;
 
-	if (!tmp)
+	if (!str)
 		return (NULL);
-	i = index_of(tmp, '\n');
-	if (i == -1)
-		i = ft_strlen(tmp);
-	// else
-	// 	i += 1;
-	return_line = malloc(sizeof(char) * i + 1);
-	if (!return_line)
-		return (NULL);
-	j = 0;
-	while (j <= i && tmp[j])
+	p = ft_strchr(str, '\n');
+	// printf("str : %s\n", str);
+	if (!p)
+		return (str);
+	i = p - str + 1;
+	// printf("line_len: %d\n", i);
+	tmp = malloc(sizeof(char) * i + 1);
+	tmp_start = tmp;
+	str_start = str;
+	while (*str)
 	{
-		return_line[j] = tmp[j];
-		j++;
+		*tmp = *str++;
+		if (*tmp++ == '\n')
+			break ;
 	}
-	return_line[j] = '\0';
-	free(tmp);
-	// printf("return_line: %s\n", return_line);
-	return (return_line);
+	*tmp = '\0';
+	free(str_start);
+	// printf("res: %d", *tmp_start);
+	return (tmp_start);
 }
 
 char	*make_remainder(char *line)
 {
-	int		j;
-	int		i;
-	char	*tmp;
-
-	i = index_of(line, '\n');
-	if (i == -1)
-		return (NULL);
-	i = i + 1;
-	j = 0;
-	j = ft_strlen(line) - i;
-	if (j <= 0) 
-		return (NULL);
-	tmp = malloc(sizeof(char) * j + 1);
-	if (!tmp)
-		return (NULL);
-	j = 0;
-	while (line[i + j])
-	{
-		tmp[j] = line[i + j];
-		j++;
-	}
-	tmp[j] = '\0';
-	free(line);
-	// printf("tmp: %s\n", tmp);
-	return (tmp);
-}
-
-char	*line_dup(char *line)
-{
-	char	*tmp;
-	int		i;
+	char	*p;
+	int		line_len;
+	char	*static_update;
+	char	*static_update_start;
 
 	if (!line)
 		return (NULL);
-	i = ft_strlen(line);
-	tmp = malloc(sizeof(char) * (i + 1));
-	if (!tmp)
+	p = ft_strchr(line, '\n');
+	if (!p || (*(p + 1) == '\0'))
+		return (NULL);
+	p++;
+	line_len = ft_strlen(p);
+	// printf("line_len: %d\n", line_len);
+	static_update = malloc(sizeof(char) * line_len + 1);
+	if (!static_update)
 		return (free(line), NULL);
-	i = 0;
-	while (line[i])
-	{
-		tmp[i] = line[i];
-		i++;
-	}
-	tmp[i] = '\0';
-	// printf("tmp: %s\n", tmp);
-	return (tmp);
+	static_update_start = static_update;
+	while (*p)
+		*static_update++ = *p++;
+	*static_update = '\0';
+	// printf("rem: %d\n", *static_update_start);
+	free(line);
+	return (static_update_start);
 }
 
 char	*get_next_line(int fd)
@@ -126,22 +111,20 @@ char	*get_next_line(int fd)
 	char		*tmp;
 	char		*buffer;
 
-	// printf("line: %s\n", line);
 	tmp = NULL;
 	buffer = NULL;
-	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE >= INT_MAX)
+	if (fd <= 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE >= INT_MAX)
 		return (NULL);
 	if (fd == -1)
 		return (NULL);
-	buffer = malloc(((size_t)BUFFER_SIZE + 1) * sizeof(char));
-	buffer[0] = '\0';
-	if (!buffer)
-		return (free(buffer), NULL);
-	line = read_buf(line, buffer, fd);
-	free(buffer);
+	line = read_buf(line, fd);
 	tmp = copy_line(line);
+	// if (tmp && ft_strchr(line) == NULL)
+	// 	return (free(line) tmp);
 	tmp = make_next_line(tmp);
 	line = make_remainder(line);
+	// printf("remainder :%s", line);
+	// printf("result :%s", tmp);
 	return (tmp);
 }
 
@@ -153,11 +136,14 @@ char	*get_next_line(int fd)
 
 // 	fd = open("text.txt", O_RDONLY);
 // 	i = 1;
-// 	while ((line = get_next_line(fd)) != NULL)
+// 	line = get_next_line(fd);
+// 	printf("line %d: (%s)", i, line);
+// 	while (line)
 // 	{
-// 		printf("line %d: %s\n", i, line);
 // 		free(line);
+// 		line = get_next_line(fd);
 // 		i++;
+// 		printf("line %d: (%s)", i, line);
 // 	}
 // 	close(fd);
 // 	return (0);
