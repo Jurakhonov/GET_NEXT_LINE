@@ -6,18 +6,18 @@
 /*   By: jjurakho <jjurakho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 17:17:28 by jjurakho          #+#    #+#             */
-/*   Updated: 2023/09/19 20:04:36 by jjurakho         ###   ########.fr       */
+/*   Updated: 2023/09/19 22:23:36 by jjurakho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*read_buf(char *line, int fd) // in case use original version
+char	*read_buf(char *line, int fd)
 {
 	int		rd;
 	char	*buffer;
 	char	*temp;
-	
+
 	rd = 1;
 	buffer = malloc(((size_t)BUFFER_SIZE + 1) * sizeof(char));
 	if (!buffer)
@@ -58,11 +58,9 @@ char	*make_next_line(char *str)
 	if (!str)
 		return (NULL);
 	p = ft_strchr(str, '\n');
-	// printf("str : %s\n", str);
 	if (!p)
 		return (str);
 	i = p - str + 1;
-	// printf("line_len: %d\n", i);
 	tmp = malloc(sizeof(char) * i + 1);
 	tmp_start = tmp;
 	str_start = str;
@@ -74,7 +72,6 @@ char	*make_next_line(char *str)
 	}
 	*tmp = '\0';
 	free(str_start);
-	// printf("res: %d", *tmp_start);
 	return (tmp_start);
 }
 
@@ -89,10 +86,9 @@ char	*make_remainder(char *line)
 		return (NULL);
 	p = ft_strchr(line, '\n');
 	if (!p || (*(p + 1) == '\0'))
-		return (NULL);
+		return (free(line), NULL);
 	p++;
 	line_len = ft_strlen(p);
-	// printf("line_len: %d\n", line_len);
 	static_update = malloc(sizeof(char) * line_len + 1);
 	if (!static_update)
 		return (free(line), NULL);
@@ -100,7 +96,6 @@ char	*make_remainder(char *line)
 	while (*p)
 		*static_update++ = *p++;
 	*static_update = '\0';
-	// printf("rem: %d\n", *static_update_start);
 	free(line);
 	return (static_update_start);
 }
@@ -119,35 +114,31 @@ char	*get_next_line(int fd)
 		return (NULL);
 	line = read_buf(line, fd);
 	tmp = copy_line(line);
-	// if (tmp && ft_strchr(line) == NULL)
-	// 	return (free(line) tmp);
 	tmp = make_next_line(tmp);
 	line = make_remainder(line);
-	// printf("remainder :%s", line);
-	// printf("result :%s", tmp);
 	return (tmp);
 }
 
-// int	main(void)
-// {
-// 	int		fd;
-// 	char	*line;
-// 	int		i;
+int	main(void)
+{
+	int		fd;
+	char	*line;
+	int		i;
 
-// 	fd = open("text.txt", O_RDONLY);
-// 	i = 1;
-// 	line = get_next_line(fd);
-// 	printf("line %d: (%s)", i, line);
-// 	while (line)
-// 	{
-// 		free(line);
-// 		line = get_next_line(fd);
-// 		i++;
-// 		printf("line %d: (%s)", i, line);
-// 	}
-// 	close(fd);
-// 	return (0);
-// }
+	fd = open("text.txt", O_RDONLY);
+	i = 1;
+	line = get_next_line(fd);
+	printf("line %d: (%s)", i, line);
+	while (line)
+	{
+		free(line);
+		line = get_next_line(fd);
+		i++;
+		printf("line %d: (%s)", i, line);
+	}
+	close(fd);
+	return (0);
+}
 
 // printf("good!\n");
 // gcc -Wall -Wextra -Werror get_next_line.c get_next_line_utils.c get_next_line.h -D BUFFER_SIZE=42  && valgrind -q --leak-check=full -s ./a.out | cat -e 
