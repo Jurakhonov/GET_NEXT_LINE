@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jjurakho <jjurakho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/18 17:17:28 by jjurakho          #+#    #+#             */
-/*   Updated: 2023/09/20 14:43:15 by jjurakho         ###   ########.fr       */
+/*   Created: 2023/09/19 23:19:48 by jjurakho          #+#    #+#             */
+/*   Updated: 2023/09/20 17:29:37 by jjurakho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*read_buf(char *line, char *buffer, int fd)
 {
@@ -23,8 +23,8 @@ char	*read_buf(char *line, char *buffer, int fd)
 		rd = read(fd, buffer, BUFFER_SIZE);
 		if (rd == -1)
 		{
-			free(line);
-			return (free(buffer), NULL);
+			line[fd] = 0;
+			return (free(line), free(buffer), NULL);
 		}
 		if (rd == 0)
 			break ;
@@ -37,8 +37,7 @@ char	*read_buf(char *line, char *buffer, int fd)
 		if (ft_strchr(line, '\n'))
 			break ;
 	}
-	free(buffer);
-	return (line);
+	return (free(buffer), line);
 }
 
 char	*make_next_line(char *str)
@@ -96,21 +95,19 @@ char	*make_remainder(char *line)
 
 char	*get_next_line(int fd)
 {
-	static char	*line;
+	static char	*line[1024];
 	char		*tmp;
 	char		*buffer;
 
 	tmp = NULL;
-	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE >= INT_MAX)
-		return (NULL);
-	if (fd == -1)
-		return (NULL);
+	if (fd >= 1000 || fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE >= INT_MAX)
+		return (0);
 	buffer = malloc(((size_t)BUFFER_SIZE + 1) * sizeof(char));
 	if (!buffer)
 		return (NULL);
-	line = read_buf(line, buffer, fd);
-	tmp = copy_line(line);
+	line[fd] = read_buf(line[fd], buffer, fd);
+	tmp = copy_line(line[fd]);
 	tmp = make_next_line(tmp);
-	line = make_remainder(line);
+	line[fd] = make_remainder(line[fd]);
 	return (tmp);
 }
